@@ -1,5 +1,8 @@
 # Decisions Made
 
+## 2026-11-20: One pyproject.toml per service in a uv workspace, over a single root pyproject or fully independent projects
+Each service deploys separately with different dependencies (pybaseball and pandas only in ingest), so per-service projects keep the Lambda images small and limit each service to the packages it needs. The workspace's single root lockfile stops versions drifting between services. The main trade-off is that all services must agree on shared package versions. I'll revisit if two services need conflicting versions of the same package, or if a service moves to its own repo.
+
 ## 2026-11-20: Split API and agent into separate Lambdas; API inside the VPC, agent outside
 A Lambda in a VPC has no internet access without a NAT gateway (~$30/mo), and only the agent needs the internet, to call Claude. The split also means the database is never reachable from the public internet. I'll revisit if traffic grows enough that ECS Fargate is cheaper than Lambda.
 
